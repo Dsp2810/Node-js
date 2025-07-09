@@ -1,0 +1,19 @@
+----- first of all the what is the API ------
+
+API ::: Application Programming Interface
+
+
+Node js:
+            -- Runs js outside the browser
+            -- Very fast,it can handle many users at a time , best for the writing the backend
+
+Express
+    js:
+            -- it is like a helper Lib built on the top of The Node
+            -- it is easier to make the api's
+            -- organize routes part
+            -- helps us to handle the data as the forms,JSON,Errors etc...
+
+
+
+Some 
