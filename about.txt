@@ -16,4 +16,9 @@ Express
 
 
 
-Some 
+Node js is the Much faster so that it is choosen  as the backend
+It gives the same language as the frontend and also the backend 
+
+-- it creates the APIs it runs the  logic and connect to the Databasse...
+-- it is also non blocking such that it dosen't wait for the user to finish before handeling next ..
+
