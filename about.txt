@@ -22,3 +22,24 @@ It gives the same language as the frontend and also the backend
 -- it creates the APIs it runs the  logic and connect to the Databasse...
 -- it is also non blocking such that it dosen't wait for the user to finish before handeling next ..
 
+
+
+--
+
+app = require('Express")
+        now about the settinfg up the backend with the mongo and the frontend as the flutter 
+            -> so for that we have to store the sensetive content in the .env file and for the loading the data from the .env to process.env we have to use the 
+            require("dotenv")
+
+and for the 
+    CORS = cross origin recource sharing 
+
+        calling the backend APis  with the diff ports or the diff browser and if we are not using this the browser blocks the request due to the CORS policy
+
+        so for  that we have to use the  {"cors = require('CORS") = > then as per the app.use(cors()) }
+
+then comes in the picture as the mongoose --Mongodb ODM(object data modeling)
+        here the called the process.env is used
+        as - >mongoose.connect(process.env._______(varname))
+        Helps you define schemas, run queries, and manage data using models.
+
