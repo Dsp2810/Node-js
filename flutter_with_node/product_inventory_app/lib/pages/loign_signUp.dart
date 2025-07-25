@@ -1,38 +1,27 @@
+import '../services/auth_services.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../pages/product_page.dart';
 
 class LoginSignUpPage extends StatefulWidget {
-  const LoginSignUpPage({super.key});
+  const LoginSignUpPage({Key? key}) : super(key: key);
 
   @override
   State<LoginSignUpPage> createState() => _LoginSignUpPageState();
 }
 
-class _LoginSignUpPageState extends State<LoginSignUpPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
+class _LoginSignUpPageState extends State<LoginSignUpPage> {
   final _loginFormKey = GlobalKey<FormState>();
   final _signupFormKey = GlobalKey<FormState>();
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
+  bool _isLogin = true;
   bool _isPasswordVisible = false;
-
-  @override
-  void initState() {
-    _tabController = TabController(length: 2, vsync: this);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Email is required';
@@ -90,10 +79,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage>
     return Card(
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: child,
-      ),
+      child: Padding(padding: const EdgeInsets.all(20), child: child),
     );
   }
 
@@ -121,16 +107,48 @@ class _LoginSignUpPageState extends State<LoginSignUpPage>
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_loginFormKey.currentState!.validate()) {
-                  // login logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Logging in...")),
+                  final result = await AuthServices.login(
+                    _emailController.text,
+                    _passwordController.text,
                   );
+                  if (result['success']) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Login successful'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProductPage()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          result['data'] is String
+                              ? result['data']
+                              : (result['data']['msg'] ?? 'Login failed'),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text("Login"),
-            )
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _isLogin = false;
+                });
+              },
+              child: const Text("Don't have an account? Sign Up"),
+            ),
           ],
         ),
       ),
@@ -148,7 +166,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage>
               label: "Name",
               icon: Icons.person,
               obscure: false,
-              controller: TextEditingController(),
+              controller: _nameController,
               validator: (value) =>
                   value == null || value.isEmpty ? "Name required" : null,
             ),
@@ -167,18 +185,69 @@ class _LoginSignUpPageState extends State<LoginSignUpPage>
               controller: _passwordController,
               validator: _validatePassword,
             ),
+            _buildTextField(
+              label: "Confirm Password",
+              icon: Icons.lock_outline,
+              obscure: true,
+              isPasswordField: true,
+              controller: _confirmPasswordController,
+              validator: (value) {
+                if (value != _passwordController.text) return 'Passwords do not match';
+                return null;
+              },
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_signupFormKey.currentState!.validate()) {
-                  // signup logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Signing up...")),
+                  final result = await AuthServices.signup(
+                    _nameController.text,
+                    _emailController.text,
+                    _passwordController.text,
                   );
+                  if (result['success']) {
+                    final token = result['data']['token'];
+                    if (token != null) {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('token', token);
+                      print("Saved token: $token");
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Sign Up successful, logged in!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProductPage()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          result['data'] is String
+                              ? result['data']
+                              : (result['data']['msg'] ?? 'Signup failed'),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text("Sign Up"),
-            )
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _isLogin = true;
+                });
+              },
+              child: const Text("Already have an account? Login"),
+            ),
           ],
         ),
       ),
@@ -202,7 +271,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage>
           child: Column(
             children: [
               Text(
-                "Welcome!",
+                _isLogin ? "Welcome Back!" : "Create an Account",
                 style: GoogleFonts.poppins(
                   fontSize: 28,
                   color: Colors.white,
@@ -210,28 +279,13 @@ class _LoginSignUpPageState extends State<LoginSignUpPage>
                 ),
               ),
               const SizedBox(height: 20),
-              TabBar(
-                controller: _tabController,
-                indicatorColor: Colors.white,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white70,
-                tabs: const [
-                  Tab(text: "Login"),
-                  Tab(text: "Sign Up"),
-                ],
-              ),
-              const SizedBox(height: 20),
               Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildLoginForm(),
-                    _buildSignupForm(),
-                  ],
+                child: SingleChildScrollView(
+                  child: _isLogin ? _buildLoginForm() : _buildSignupForm(),
                 ),
-              )
+              ),
             ],
-          ), 
+          ),
         ),
       ),
     );
