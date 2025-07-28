@@ -9,6 +9,7 @@ class Myapp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Shop App',
+
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true, // Enables modern Material Design 3

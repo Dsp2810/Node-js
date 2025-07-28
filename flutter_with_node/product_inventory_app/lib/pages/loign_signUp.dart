@@ -1,3 +1,5 @@
+import 'package:product_inventory_app/widgets/product_card.dart';
+
 import '../services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +27,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Email is required';
-    if (!value.contains('@') || !value.contains('.')) return 'Enter a valid email';
+    if (!value.contains('@') || !value.contains('.'))
+      return 'Enter a valid email';
     return null;
   }
 
@@ -55,7 +58,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           suffixIcon: isPasswordField
               ? IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {
@@ -131,7 +136,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                         content: Text(
                           result['data'] is String
                               ? result['data']
-                              : (result['data']['msg'] ?? 'Login failed'),
+                              : (result['data ']['msg'] ?? 'Login failed'),
                         ),
                         backgroundColor: Colors.red,
                       ),
@@ -192,7 +197,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               isPasswordField: true,
               controller: _confirmPasswordController,
               validator: (value) {
-                if (value != _passwordController.text) return 'Passwords do not match';
+                if (value != _passwordController.text)
+                  return 'Passwords do not match';
                 return null;
               },
             ),

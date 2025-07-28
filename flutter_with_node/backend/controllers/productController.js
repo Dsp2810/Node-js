@@ -13,8 +13,8 @@ const getProducts = async (req, res) => {
 // Add a new product
 const addProduct = async (req, res) => {
   try {
-    const { name, price, description, image } = req.body;
-    const product = new Product({ name, price, description, image });
+    const { name, price, description, image, isFav } = req.body;
+    const product = new Product({ name, price, description, image, isFav: isFav ?? false });
     await product.save();
     res.status(201).json(product);
   } catch (err) {

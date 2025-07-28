@@ -9,7 +9,7 @@ const {
 } = require("../controllers/productController")
 router.get('/',getProducts)
 
-router.post('/add',addProduct)
+router.post('/add',product,addProduct)
 router.post('/fav/:id',toggleFav)
 
 
