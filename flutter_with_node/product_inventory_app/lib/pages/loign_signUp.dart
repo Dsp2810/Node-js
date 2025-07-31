@@ -125,8 +125,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                         backgroundColor: Colors.green,
                       ),
                     );
-
-                    Navigator.pushReplacement(
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ProductPage()),
                     );
