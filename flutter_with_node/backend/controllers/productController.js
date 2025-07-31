@@ -12,10 +12,11 @@ const Product = require('../models/product');
 
 const getMyProducts = async (req, res) => {
   try {
-    const products = (await Product.find({ user: req.user._id })).sort({ createdAt: -1 })
+    const products = await Product.find({ user: req.user._id }).sort({ createdAt: -1 })
     res.status(200).json(products)
   }
   catch (err) {
+    console.log("Error in getMyProducts:", err)
     res.status(500).json({ msg: "Server Error", error: err.message })
   }
 }
