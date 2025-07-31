@@ -5,12 +5,13 @@ import '../pages/add_product_page.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
+
   @override
-  _productpagestate createState() => _productpagestate();
+  _ProductPageState createState() => _ProductPageState();
 }
 
-class _productpagestate extends State<ProductPage> {
-  List<dynamic> _prducts = [];
+class _ProductPageState extends State<ProductPage> {
+  List<dynamic> _products = [];
   bool _isLoading = true;
 
   @override
@@ -23,16 +24,28 @@ class _productpagestate extends State<ProductPage> {
     final res = await ProductServices.fetchProduct();
     if (res['success']) {
       setState(() {
-        _prducts = res['data'];
+        _products = res['data'];
         _isLoading = false;
       });
     } else {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(res['data'].toString())));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${res['data']}")),
+      );
+    }
+  }
+
+  void _navigateToAddProduct() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AddProductPage()),
+    );
+
+    // Refresh only if a new product was added
+    if (result == true) {
+      _fetchProducts();
     }
   }
 
@@ -41,48 +54,42 @@ class _productpagestate extends State<ProductPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('Products'),
+        title: const Text('Products'),
         centerTitle: true,
         backgroundColor: Colors.deepPurpleAccent,
         actions: [
           IconButton(
             onPressed: _fetchProducts,
-            icon: Icon(Icons.refresh_rounded),
+            icon: const Icon(Icons.refresh_rounded),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.deepPurpleAccent,
-        onPressed: () {
-          /* navigation to add product*/
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddProductPage()),
-          );
-        },
-        icon: Icon(Icons.add),
-        label: Text("Add Product"),
+        onPressed: _navigateToAddProduct,
+        icon: const Icon(Icons.add),
+        label: const Text("Add Product"),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _prducts.isEmpty
-          ? Center(child: Text("No Products"))
-          : RefreshIndicator(
-              onRefresh: _fetchProducts,
-              child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 80, top: 10),
-                itemCount: _prducts.length,
-                itemBuilder: (context, index) {
-                  final product = _prducts[index];
-                  return ProductCard(
-                    name: product['name'] ?? "Unnamed",
-                    price: (product['price'] ?? 0).toDouble(),
-                    quantity: product["quantity"] ?? 0,
-                    url: product["image"] ?? "",
-                  );
-                },
-              ),
-            ),
+          : _products.isEmpty
+              ? const Center(child: Text("No Products"))
+              : RefreshIndicator(
+                  onRefresh: _fetchProducts,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 80, top: 10),
+                    itemCount: _products.length,
+                    itemBuilder: (context, index) {
+                      final product = _products[index];
+                      return ProductCard(
+                        name: product['name'] ?? "Unnamed",
+                        price: double.tryParse(product['price'].toString()) ?? 0.0,
+                        quantity: product['quantity'] ?? 0,
+                        url: product['image'] ?? "",
+                      );
+                    },
+                  ),
+                ),
     );
   }
 }

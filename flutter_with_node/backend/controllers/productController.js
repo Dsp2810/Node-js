@@ -41,8 +41,29 @@ const toggleFav = async (req, res) => {
   }
 };
 
+const uploadProductWithImage = async (req, res) => {
+
+  try {
+    const { name, price, description, isFav } = req.body
+    if (!req.file) {
+      return res.status(400).json({ msg: "No Image File Uploaded" })
+    }
+    const imagePath = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+
+    const product = new Product({
+      name, price, description, image: imagePath, isFav: isFav ?? false
+    })
+    await product.save()
+    res.status(201).json(product)
+  }
+  catch (err) {
+    res.status(500).json({ msg: "Server Error ", error: err.message })
+  }
+}
+
 module.exports = {
   getProducts,
   addProduct,
-  toggleFav
+  toggleFav,
+  uploadProductWithImage
 };

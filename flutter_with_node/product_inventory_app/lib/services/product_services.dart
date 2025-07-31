@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class ProductServices {
   // Make sure to use your local IP if you're testing on a physical device!
-  static const String baseUrl = "http://localhost:5000/api";
+  // static const String baseUrl = "http://192.168.0.123:5000/api";
+  static const String baseUrl = "https://node-js-oerf.onrender.com/api";
 
   /// Fetch all products
   static Future<Map<String, dynamic>> fetchProduct() async {
@@ -78,6 +80,49 @@ class ProductServices {
           'success': false,
           'data': data['msg'] ?? 'Failed to add product',
         };
+      }
+    } catch (err) {
+      return {'success': false, 'data': "Error: $err"};
+    }
+  }
+
+  /// Upload product with image file (from gallery or camera)
+  static Future<Map<String, dynamic>> uploadProductWithImage({
+    required String name,
+    required double price,
+    required String description,
+    required File file,
+    required bool isFav,
+    int quantity = 1,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        return {'success': false, 'data': 'No token found'};
+      }
+
+      var uri = Uri.parse("$baseUrl/products/upload");
+      var request = http.MultipartRequest('POST', uri);
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.fields['name'] = name;
+      request.fields['price'] = price.toString();
+      request.fields['description'] = description;
+      request.fields['isFav'] = isFav.toString();
+      request.fields['quantity'] = quantity.toString();
+
+      request.files.add(await http.MultipartFile.fromPath('image', file.path));
+
+      var response = await request.send();
+      final resBody = await response.stream.bytesToString();
+      final resData = jsonDecode(resBody);
+
+      if (response.statusCode == 201) {
+        return {'success': true, 'data': resData};
+      } else {
+        return {'success': false, 'data': resData['msg'] ?? 'Upload failed'};
       }
     } catch (err) {
       return {'success': false, 'data': "Error: $err"};

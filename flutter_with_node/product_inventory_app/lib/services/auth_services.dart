@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthServices {
   // static const String baseUrl = "http://192.168.0.115:5000/api";
-  static const String baseUrl = "http://localhost:5000/api";
+  // static const String baseUrl = "http://192.168.0.123:5000/api";
+  static const String baseUrl = "https://node-js-oerf.onrender.com/api";
+
 
   static Future<Map<String, dynamic>> login(
     String email,
