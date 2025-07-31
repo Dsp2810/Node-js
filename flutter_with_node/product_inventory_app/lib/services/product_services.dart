@@ -46,6 +46,7 @@ class ProductServices {
     required double price,
     required String description,
     required String imageUrl,
+    required int quantity,
     required bool isFav,
   }) async {
     try {
@@ -66,6 +67,7 @@ class ProductServices {
           'name': name,
           'price': price,
           'description': description,
+          "quantity": quantity,
           'image': imageUrl,
           'isFav': isFav,
         }),
@@ -93,7 +95,7 @@ class ProductServices {
     required String description,
     required File file,
     required bool isFav,
-    int quantity = 1,
+    required int quantity,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();

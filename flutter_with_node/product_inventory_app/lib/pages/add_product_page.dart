@@ -19,6 +19,7 @@ class _AddProductPageState extends State<AddProductPage> {
   String description = '';
   bool isFav = false;
   bool isLoading = false;
+  int quantity = 1;
   File? selectedImage;
 
   final ImagePicker _picker = ImagePicker();
@@ -45,6 +46,7 @@ class _AddProductPageState extends State<AddProductPage> {
         price: price,
         description: description,
         isFav: isFav,
+        quantity: quantity,
         file: selectedImage!,
       );
 
@@ -53,19 +55,19 @@ class _AddProductPageState extends State<AddProductPage> {
       });
 
       if (result['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("✅ Product Added Successfully")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("✅ Product Added Successfully")));
         Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("❌ Failed: ${result['data']}")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("❌ Failed: ${result['data']}")));
       }
     } else if (selectedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("📷 Please select an image")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("📷 Please select an image")));
     }
   }
 
@@ -102,6 +104,13 @@ class _AddProductPageState extends State<AddProductPage> {
                 onSaved: (val) => description = val!,
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Enter Description' : null,
+              ),
+              SizedBox(height: 14),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Quantity"),
+                onSaved: (val) => quantity = int.parse(val!),
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Enter Quantity' : null,
               ),
               SizedBox(height: 14),
               Text("📸 Product Image", style: TextStyle(fontSize: 16)),

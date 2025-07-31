@@ -1,20 +1,29 @@
 const Product = require('../models/product');
 
-// Get all products
-const getProducts = async (req, res) => {
-  try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ msg: "Server error", error: err.message });
-  }
-};
+// // Get all products
+// const getProducts = async (req, res) => {
+//   try {
+//     const products = await Product.find().sort({ createdAt: -1 });
+//     res.json(products);
+//   } catch (err) {
+//     res.status(500).json({ msg: "Server error", error: err.message });
+//   }
+// };
 
+const getMyProducts = async (req, res) => {
+  try {
+    const products = (await Product.find({ user: req.user._id })).sort({ createdAt: -1 })
+    res.status(200).json(products)
+  }
+  catch (err) {
+    res.status(500).json({ msg: "Server Error", error: err.message })
+  }
+}
 // Add a new product
 const addProduct = async (req, res) => {
   try {
-    const { name, price, description, image, isFav } = req.body;
-    const product = new Product({ name, price, description, image, isFav: isFav ?? false });
+    const { name, price, description, image, isFav, quantity } = req.body;
+    const product = new Product({ name, price, description, image, isFav: isFav ?? false, quantity, user: req.user._id });
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -44,14 +53,14 @@ const toggleFav = async (req, res) => {
 const uploadProductWithImage = async (req, res) => {
 
   try {
-    const { name, price, description, isFav } = req.body
+    const { name, price, description, isFav, quantity } = req.body
     if (!req.file) {
       return res.status(400).json({ msg: "No Image File Uploaded" })
     }
     const imagePath = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
 
     const product = new Product({
-      name, price, description, image: imagePath, isFav: isFav ?? false
+      name, price, description, image: imagePath, isFav: isFav ?? false, quantity, user: req.user._id
     })
     await product.save()
     res.status(201).json(product)
@@ -62,7 +71,7 @@ const uploadProductWithImage = async (req, res) => {
 }
 
 module.exports = {
-  getProducts,
+  getMyProducts,
   addProduct,
   toggleFav,
   uploadProductWithImage
