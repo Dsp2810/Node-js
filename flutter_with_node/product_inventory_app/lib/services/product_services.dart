@@ -96,6 +96,7 @@ class ProductServices {
     required File file,
     required bool isFav,
     required int quantity,
+    required String userId,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -113,6 +114,7 @@ class ProductServices {
       request.fields['price'] = price.toString();
       request.fields['description'] = description;
       request.fields['isFav'] = isFav.toString();
+      request.fields['userId'] = userId;
       request.fields['quantity'] = quantity.toString();
 
       request.files.add(await http.MultipartFile.fromPath('image', file.path));

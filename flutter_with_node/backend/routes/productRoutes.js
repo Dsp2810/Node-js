@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const product = require('../middlewares/authMiddleware')
 const multer = require('multer')
+const path = require('path')
 
 const {
     getMyProducts,
@@ -18,8 +19,13 @@ const storage = multer.diskStorage(
             cb(null, 'uploads/')
         },
         filename: function (req, file, cb) {
-            const cleanName = file.originalname.replace(/\s+/g, '_');
-            cb(null, Date.now() + ' - ' + cleanName)
+            const productName = req.body.name || 'Product'
+            const userId = req.body.userId || 'user'
+            const date = new Date().toISOString().split('T')[0]
+            const ext = path.extname(file.originalname)
+
+            const cleanName = `${productName}_${userId}_${date}${ext}`.replace(/\s+/g, '_');
+            cb(null, cleanName)
         }
     }
 )

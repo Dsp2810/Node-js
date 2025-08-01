@@ -7,7 +7,6 @@ class AuthServices {
   // static const String baseUrl = "http://192.168.0.123:5000/api";
   static const String baseUrl = "https://node-js-oerf.onrender.com/api";
 
-
   static Future<Map<String, dynamic>> login(
     String email,
     String password,
@@ -21,13 +20,15 @@ class AuthServices {
 
       final data = jsonDecode(res.body);
 
-      // ✅ Save token if successful
       if (res.statusCode == 200 && data['token'] != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['token']);
-      }
 
-      return {'success': res.statusCode == 200, 'data': data};
+        return {'success': true, 'data': data};
+      } else {
+        String errorMessage = data['msg'] ?? 'Login failed';
+        return {'success': false, 'data': errorMessage};
+      }
     } catch (err) {
       return {'success': false, 'data': 'Error: $err'};
     }
