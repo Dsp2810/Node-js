@@ -21,6 +21,7 @@ class _AddProductPageState extends State<AddProductPage> {
   bool isLoading = false;
   int quantity = 1;
   File? selectedImage;
+  String userId = '';
 
   final ImagePicker _picker = ImagePicker();
 
@@ -48,6 +49,7 @@ class _AddProductPageState extends State<AddProductPage> {
         isFav: isFav,
         quantity: quantity,
         file: selectedImage!,
+        userId: userId,
       );
 
       setState(() {

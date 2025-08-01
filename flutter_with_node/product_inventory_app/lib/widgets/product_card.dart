@@ -28,10 +28,13 @@ class ProductCard extends StatelessWidget {
               height: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
-                color: Colors.grey[400],
                 image: url != null
                     ? DecorationImage(
-                        image: NetworkImage(url!),
+                        image: NetworkImage(
+                          url!.startsWith('http')
+                              ? url!
+                              : 'http://node-js-oerf.onrender.com/$url',
+                        ),
                         fit: BoxFit.cover,
                       )
                     : null,

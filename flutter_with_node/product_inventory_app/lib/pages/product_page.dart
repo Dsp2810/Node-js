@@ -31,9 +31,9 @@ class _ProductPageState extends State<ProductPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: ${res['data']}")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${res['data']}")));
     }
   }
 
@@ -73,27 +73,28 @@ class _ProductPageState extends State<ProductPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _products.isEmpty
-              ? const Center(child: Text("No Products"))
-              : RefreshIndicator(
-                  onRefresh: _fetchProducts,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80, top: 10),
-                    itemCount: _products.length,
-                    itemBuilder: (context, index) {
-                      final product = _products[index];
-                      return ProductCard(
-                        name: product['name'] ?? "Unnamed",
-                        price: double.tryParse(product['price'].toString()) ?? 0.0,
-                        quantity: product['quantity'] ?? 0,
-                        url: product['image'] ?? "",
-                      );
-                    },
-                  ),
-                ),
+          ? const Center(child: Text("No Products"))
+          : RefreshIndicator(
+              onRefresh: _fetchProducts,
+              child: ListView.builder(
+                padding: const EdgeInsets.only(bottom: 80, top: 10),
+                itemCount: _products.length,
+                itemBuilder: (context, index) {
+                  final product = _products[index];
+                  return ProductCard(
+                    name: product['name'] ?? "Unnamed",
+                    price: double.tryParse(product['price'].toString()) ?? 0.0,
+                    quantity: product['quantity'] ?? 0,
+                    url: product['image'] != null
+                        ? 'http://node-js-oerf.onrender.com/${product['image']}'
+                        : '',
+                  );
+                },
+              ),
+            ),
     );
   }
 }
-
 
 // import 'dart:io';
 // import 'package:flutter/material.dart';

@@ -52,6 +52,7 @@ const toggleFav = async (req, res) => {
   }
 };
 
+const imageUrl = `/uploads/${req.file.filename}`
 const uploadProductWithImage = async (req, res) => {
 
   try {
