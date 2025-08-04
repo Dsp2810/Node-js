@@ -60,7 +60,8 @@ const uploadProductWithImage = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ msg: "No Image File Uploaded" })
     }
-    const imagePath = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+    // const imagePath = `/uploads/${req.file.filename}`
+    const imagePath = `uploads/${req.file.filename}`;
 
     const product = new Product({
       name, price, description, image: imagePath, isFav: isFav ?? false, quantity, user: req.user._id

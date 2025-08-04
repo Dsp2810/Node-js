@@ -12,7 +12,7 @@ class ProductCard extends StatelessWidget {
     required this.price,
     required this.quantity,
     required this.url,
-    required this.onedit
+    required this.onedit,
   }) : super(key: key);
 
   @override
@@ -33,7 +33,7 @@ class ProductCard extends StatelessWidget {
                 image: url != null
                     ? DecorationImage(
                         image: NetworkImage(
-                          url!.startsWith('http')
+                          Uri.parse(url!).isAbsolute
                               ? url!
                               : 'http://node-js-oerf.onrender.com/$url',
                         ),
@@ -83,7 +83,7 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: onedit,
               icon: Icon(Icons.edit, color: Colors.blue),
             ),
           ],
