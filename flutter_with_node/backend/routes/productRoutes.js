@@ -8,7 +8,8 @@ const {
     getMyProducts,
     addProduct,
     toggleFav,
-    uploadProductWithImage
+    uploadProductWithImage,
+    updateProduct
 } = require("../controllers/productController")
 
 // making the storage 
@@ -37,6 +38,7 @@ router.post('/upload', product, upload.single('image'), uploadProductWithImage)
 
 router.post('/add', product, addProduct)
 router.post('/fav/:id', toggleFav)
+router.put("edit/:id", product, updateProduct)
 
 
 module.exports = router

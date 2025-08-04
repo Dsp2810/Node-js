@@ -5,12 +5,14 @@ class ProductCard extends StatelessWidget {
   final double price;
   final int quantity;
   final String? url;
+  final VoidCallback onedit;
   const ProductCard({
     Key? key,
     required this.name,
     required this.price,
     required this.quantity,
     required this.url,
+    required this.onedit
   }) : super(key: key);
 
   @override

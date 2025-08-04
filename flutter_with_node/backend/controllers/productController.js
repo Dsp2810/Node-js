@@ -73,9 +73,27 @@ const uploadProductWithImage = async (req, res) => {
   }
 }
 
+const updateProduct = async (req, res) => {
+  try {
+
+    const { name, price, des, quantity } = req.body
+    const product = Product.findByIdAndUpdate({
+      _id: req.params.id, user: req.user._id
+    },
+      { name, price, des, quantity },
+      { new: true })
+    if (!product) return res.status(404).json({ msg: "Product Not Found" })
+    res.status(200).json(product)
+  }
+  catch (err) {
+    res.status(500).json({ msg: "Error Updating Product", error: err.message })
+  }
+}
+
 module.exports = {
   getMyProducts,
   addProduct,
   toggleFav,
-  uploadProductWithImage
+  uploadProductWithImage,
+  updateProduct
 };
