@@ -33,9 +33,10 @@ class ProductCard extends StatelessWidget {
                 image: url != null
                     ? DecorationImage(
                         image: NetworkImage(
-                          Uri.parse(url!).isAbsolute
-                              ? url!
-                              : 'http://node-js-oerf.onrender.com/$url',
+                          // Uri.parse(url!).isAbsolute
+                          //     ? url!
+                          //     : 'http://node-js-oerf.onrender.com/$url',
+                          url!,
                         ),
                         fit: BoxFit.cover,
                       )
